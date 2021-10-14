@@ -1,0 +1,118 @@
+cloudprovider: vsphere
+
+cloudCredentialSecretName: cattle-global-data:cc-fdfcp
+
+# Specify nodepool options. Can add multiple node groups, specify etcd, controlplane and worker roles.
+nodepools:
+- # specify nodepool name - override with helm
+  name: rke2-vsphere-helm-server
+  etcd: true
+  controlplane: true
+  worker: false
+  # specify node labels
+  # labels: {}
+  # # specify node taints
+  # taints: {}
+  # specify nodepool size
+  quantity: 1
+  # Pause node pool
+  # paused: false
+  cpuCount: "2"
+  creationType: template
+  datacenter: /Datacenter
+  datastore: /Datacenter/datastore/datastore1
+  diskSize: "20480"
+  memorySize: "4096"
+
+  # vSphere network where the virtual machine will be attached
+  network:
+  - /Datacenter/network/VM Network
+  
+  # vSphere vm configuration parameters (used for guestinfo)
+  # cfgparam: []
+  
+  # If you choose creation type clone a name of what you want to clone is required
+  cloneFrom: /Datacenter/vm/centos-7-cloudinit-template
+
+  # vSphere cloud-init filepath or url to add to guestinfo, filepath will be read and base64 encoded before adding
+  cloudinit: |-
+  #cloud-config
+  users:
+    - name: rancher
+      sudo: 'ALL=(ALL) NOPASSWD:ALL'
+      home: /home/rancher
+      shell: /bin/bash
+      lock_passwd: true
+      ssh_pwauth: false
+      groups: wheel
+      ssh_authorized_keys:
+        - >-
+          ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQChxiOGF+j3PyUSaT/TL1r2ZczW0o48YwuvJ+clVrXut/pX+hdHD+WE9PSZIbFbbbzJqDCLZDV9dCHRl2McHgHY89zdpI5dh4zOayCtaIzWUT1AdKZjeKQb+YBwHtgupfKySuzkIYKx7+RtdBN68dIoTCRmDYs+pCplDTT2CS6Jr0zibKXA+VACSasYAyQkJ1HB3yNUF3Xp9S2Oo9LL/1o/vPp
+          iEnyf2t3vmP1cjnQZJ82lJMdhG+O5TpgHmJn2bEwh5YB7ydlMN8gM+Scgh78wJKuvIjxiSqq/ZOCYPRnX4HBdUF3oq2cCsSdUUndx18YFPdQJwsUUuI4jrHX+9wMabsdyqklZJecDPDuvPorO49xpBmJ1tnnhRdU5oo76swl/zlWz18RbIEK9wsr3/VerLIbZ1oBavM9fZyg29nMzJPcKTxG7mI0j+Lp0ehx3AJmvqumZ2UkoVxt7v0XNVyVXqD
+          FThOMys1Jpmj5u+LtPiRLsHVpXNQqdob4PxaUeERYveWmnSCoMJXzpvc42yOGZmKRtMk9WxZNzjJH4DjWLkbEbgsfTof/pF4rJ+geRWcu8Cbi16JBJzBBqs2G1yEUkPL9DIKvBtMaStNO7PjwY8JrV6nQxBTl9iKJ52sA99QRunFtkgJd+nwmwC1765FV08S9NoKJ8osPQ/1pJgzILuQ== no-reply@thisisatest.com
+
+  # # Filepath to a cloud-config yaml file to put into the ISO user-data
+  # cloudConfig: |-
+  # #cloud-config
+  # users:
+  #   - name: rancher
+  #     sudo: 'ALL=(ALL) NOPASSWD:ALL'
+  #     home: /home/rancher
+  #     shell: /bin/bash
+  #     lock_passwd: true
+  #     ssh_pwauth: false
+  #     groups: wheel
+  #     ssh_authorized_keys:
+  #       - >-
+  #         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQChxiOGF+j3PyUSaT/TL1r2ZczW0o48YwuvJ+clVrXut/pX+hdHD+WE9PSZIbFbbbzJqDCLZDV9dCHRl2McHgHY89zdpI5dh4zOayCtaIzWUT1AdKZjeKQb+YBwHtgupfKySuzkIYKx7+RtdBN68dIoTCRmDYs+pCplDTT2CS6Jr0zibKXA+VACSasYAyQkJ1HB3yNUF3Xp9S2Oo9LL/1o/vPp
+  #         iEnyf2t3vmP1cjnQZJ82lJMdhG+O5TpgHmJn2bEwh5YB7ydlMN8gM+Scgh78wJKuvIjxiSqq/ZOCYPRnX4HBdUF3oq2cCsSdUUndx18YFPdQJwsUUuI4jrHX+9wMabsdyqklZJecDPDuvPorO49xpBmJ1tnnhRdU5oo76swl/zlWz18RbIEK9wsr3/VerLIbZ1oBavM9fZyg29nMzJPcKTxG7mI0j+Lp0ehx3AJmvqumZ2UkoVxt7v0XNVyVXqD
+  #         FThOMys1Jpmj5u+LtPiRLsHVpXNQqdob4PxaUeERYveWmnSCoMJXzpvc42yOGZmKRtMk9WxZNzjJH4DjWLkbEbgsfTof/pF4rJ+geRWcu8Cbi16JBJzBBqs2G1yEUkPL9DIKvBtMaStNO7PjwY8JrV6nQxBTl9iKJ52sA99QRunFtkgJd+nwmwC1765FV08S9NoKJ8osPQ/1pJgzILuQ== no-reply@thisisatest.com
+
+- # specify nodepool name - override with helm
+  name: rke2-vsphere-helm-agent
+  etcd: false
+  controlplane: false
+  worker: true
+  # specify node labels
+  # labels: {}
+  # # specify node taints
+  # taints: {}
+  # specify nodepool size
+  quantity: 1
+  # Pause node pool
+  # paused: false
+  cpuCount: "2"
+  creationType: template
+  datacenter: /Datacenter
+  datastore: /Datacenter/datastore/datastore1
+  diskSize: "20480"
+  memorySize: "4096"
+
+  # vSphere network where the virtual machine will be attached
+  network:
+  - /Datacenter/network/VM Network
+  
+  # vSphere vm configuration parameters (used for guestinfo)
+  # cfgparam: []
+  # If you choose creation type clone a name of what you want to clone is required
+  cloneFrom: /Datacenter/vm/centos-7-cloudinit-template
+
+  # vSphere cloud-init filepath or url to add to guestinfo, filepath will be read and base64 encoded before adding
+  # cloudinit: |-
+
+  # Filepath to a cloud-config yaml file to put into the ISO user-data
+  cloudConfig: |-
+  #cloud-config
+  users:
+    - name: rancher
+      sudo: 'ALL=(ALL) NOPASSWD:ALL'
+      home: /home/rancher
+      shell: /bin/bash
+      lock_passwd: true
+      ssh_pwauth: false
+      groups: wheel
+      ssh_authorized_keys:
+        - >-
+          ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQChxiOGF+j3PyUSaT/TL1r2ZczW0o48YwuvJ+clVrXut/pX+hdHD+WE9PSZIbFbbbzJqDCLZDV9dCHRl2McHgHY89zdpI5dh4zOayCtaIzWUT1AdKZjeKQb+YBwHtgupfKySuzkIYKx7+RtdBN68dIoTCRmDYs+pCplDTT2CS6Jr0zibKXA+VACSasYAyQkJ1HB3yNUF3Xp9S2Oo9LL/1o/vPp
+          iEnyf2t3vmP1cjnQZJ82lJMdhG+O5TpgHmJn2bEwh5YB7ydlMN8gM+Scgh78wJKuvIjxiSqq/ZOCYPRnX4HBdUF3oq2cCsSdUUndx18YFPdQJwsUUuI4jrHX+9wMabsdyqklZJecDPDuvPorO49xpBmJ1tnnhRdU5oo76swl/zlWz18RbIEK9wsr3/VerLIbZ1oBavM9fZyg29nMzJPcKTxG7mI0j+Lp0ehx3AJmvqumZ2UkoVxt7v0XNVyVXqD
+          FThOMys1Jpmj5u+LtPiRLsHVpXNQqdob4PxaUeERYveWmnSCoMJXzpvc42yOGZmKRtMk9WxZNzjJH4DjWLkbEbgsfTof/pF4rJ+geRWcu8Cbi16JBJzBBqs2G1yEUkPL9DIKvBtMaStNO7PjwY8JrV6nQxBTl9iKJ52sA99QRunFtkgJd+nwmwC1765FV08S9NoKJ8osPQ/1pJgzILuQ== no-reply@thisisatest.com
